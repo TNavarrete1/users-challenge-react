@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import UserPosts from "./UserPosts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,33 +9,36 @@ import {
 
 export default function UserComponent({ users }) {
   const [dropdownOpen, setDropdownStatus] = useState(
-    Array(Object.keys(users).length).fill(false)
+    Array(Object.keys(users).length + 1).fill(false)
   );
 
-  function toggleDropdown(event) {
-    const userId = event.currentTarget.getAttribute("data-key");
-    if (dropdownOpen[userId]) {
-      setDropdownStatus((prevState) => {
-        return prevState.map((curr, index) => {
-          if (index === parseInt(userId)) {
-            return false;
-          } else {
-            return curr;
-          }
+  const toggleDropdown = useCallback(
+    (event) => {
+      const userId = event.currentTarget.getAttribute("data-key");
+      if (dropdownOpen[userId]) {
+        setDropdownStatus((prevState) => {
+          return prevState.map((curr, index) => {
+            if (index === parseInt(userId)) {
+              return false;
+            } else {
+              return curr;
+            }
+          });
         });
-      });
-    } else {
-      setDropdownStatus((prevState) => {
-        return prevState.map((curr, index) => {
-          if (index === parseInt(userId)) {
-            return true;
-          } else {
-            return curr;
-          }
+      } else {
+        setDropdownStatus((prevState) => {
+          return prevState.map((curr, index) => {
+            if (index === parseInt(userId)) {
+              return true;
+            } else {
+              return curr;
+            }
+          });
         });
-      });
-    }
-  }
+      }
+    },
+    [dropdownOpen]
+  );
 
   return users.map((user) => {
     return (
